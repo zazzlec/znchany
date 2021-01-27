@@ -1,0 +1,280 @@
+<style scoped  lang="less">
+@minheight:600px;
+@size : 90px;
+@x_a:-11deg;
+@y_a:-25deg;
+@z_a:-1deg;
+@bcolor : red;
+@hou : 150px;
+@h1:210px;
+@w1:10px;
+
+@w2:30px;
+@w3:38px;
+@h2:200px;
+@h3:100px;
+
+@movex:130px;
+body{
+  font-size: 10px;
+}
+.znch{
+    position: relative;
+    background-color: #f0f0f0;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    .svg{
+      height: auto;
+      background-color: #fff;
+      float: left;
+
+      .container {
+          left: @movex;
+          top: 30px;
+          position:absolute;
+          transform-style: preserve-3d;
+          transform:rotateX(@x_a) rotateY(@y_a) rotateZ(@z_a) ;
+          // animation: rotate 10s linear infinite;
+          transition: all 0.1s ease-out;
+          overflow:visible;
+          .wrap_pg {
+              opacity:0.5;
+              border: 1px solid @bcolor;
+              box-sizing: border-box;
+              border-radius: 3px;
+              // background-color: @bcolor;
+              transition: all 1s ease-out;
+              font-size:30px;
+              text-align: center;
+              position: absolute;
+          }
+          .wrap-front {
+              transform: translateX(@w1/2) translateY(0) translateZ(@hou/2);
+              width: @w1;
+              height: @h1;
+          }
+          .wrap-back {
+              transform: translateX(@w1/2) translateY(0) translateZ(-@hou/2) rotateY(180deg);
+              width: @w1;
+              height: @h1;
+          }
+          .wrap-left {
+              transform: translateX(-15-@size/2-@w1) translateY(0) translateZ(0)  rotateY(-90deg);
+              width: @hou;
+              height: @h1;
+              border: 1px dashed #111;
+          }
+          .wrap-right {
+              transform: translateX(-15-@size/2) translateY(0) translateZ(0)  rotateY(90deg);
+              width: @hou;
+              height: @h1;
+              border: 1px dashed #111;
+          }
+          
+      }
+      .c2{
+        transform:translateX(-2+@w1) rotateX(@x_a) rotateY(@y_a) rotateZ(@z_a)  !important;
+        top:31px;
+      }
+      .r{
+        left: 30px+@movex;
+      }
+    }
+    .list{
+      float: left;
+      height: 100%;
+      border: 1px solid red;
+      position:absolute;
+      right: 0px;
+      top: 2px;
+      opacity: 0.8;
+    }
+
+    .point{
+              position:absolute;
+              width: @size/6;
+              height:  @size/6;
+              border-radius: 50%;
+              background: radial-gradient(circle at 10px 10px ,#6ddcf6,#2d8cf0);
+              line-height: @size/6;
+              z-index: 1001;
+              -webkit-animation: Glow 1.0s ease infinite alternate;
+              animation: Glow 1.0s ease infinite alternate;
+          }
+
+    @keyframes Glow {
+        from {
+            box-shadow: 0 0 10px #fff,
+                        0 0 50px #fff,
+                        0 0 70px #fff,
+                        0 0 90px #00a67c,
+                        0 0 100px #00a67c,
+                        0 0 130px #00a67c,
+                        0 0 160px #00a67c,
+                        0 0 200px #00a67c;
+        }
+        to {
+            box-shadow: 0 0 1px #fff,
+                        0 0 3px #fff,
+                        0 0 6px #fff,
+                        0 0 8px #00a67c,
+                        0 0 10px #00a67c,
+                        0 0 15px #00a67c,
+                        0 0 20px #00a67c,
+                        0 0 25px #00a67c;
+        }
+    }
+}
+
+
+
+</style>
+<template>
+<div class="znch">
+  <div class="svg" :style="{width:w+'px'}">
+    <!-- <svg-img></svg-img> -->
+  </div>
+  <div class="list" :style="{width:w2+'px',height:h2+'px'}"></div>
+</div>
+</template>
+
+<script>
+import store from '@/store'
+//工具包
+import { getDateMore,sortBy,gradientColor,getDate } from "@/libs/tools";
+//机组
+import { getBoilerListAll } from "@/api/ZNRS/Dncboiler";
+import anime from 'animejs/lib/anime.js';
+//右键菜单
+import VueContextMenu from 'vue-contextmenu/src/VueContextMenu';
+//threejs
+import * as Three from 'three';
+import g3gif from "@/assets/images/g3.gif";
+
+// import svg from "@/view/single-page/home/conf";
+
+export default {
+  name: "ZNRS_znch_page",
+  components: {
+    "vue-context-menu" : VueContextMenu,
+    // "svg-img":svg
+  },
+  data() {
+    return {
+      //three
+      camera: null,
+      scene: null,
+      renderer: null,
+      mesh: null,
+
+      btncolors:['#c23531','#2f4554','#61a0a8','#d48265','#91c7ae','#749f83','#ca8622','#484891','#336666','#bda29a'],
+      transferIndex: null,  
+      	// contextmenu data (菜单数据)
+      contextMenuData: {
+        // the contextmenu name(@1.4.1 updated)
+        menuName: 'demo',
+        // The coordinates of the display(菜单显示的位置)
+        axis: {
+          x: null,
+          y: null
+        },
+        // Menu options (菜单选项)
+        menulists: [{
+          fnHandler: 'savedata', // Binding events(绑定事件)
+          icoName: 'icon ivu-icon ios-refresh-circle', // icon (icon图标 )
+          btnName: '数据重置' // The name of the menu option (菜单名称)
+        },{
+          fnHandler: 'savedata3', // Binding events(绑定事件)
+          icoName: 'icon ivu-icon logo-steam', // icon (icon图标 )
+          btnName: '数据回看' // The name of the menu option (菜单名称)
+        }]
+      },
+
+
+      //机组
+      boilertime:"",
+      boilerid:-1,
+      boiler:"",
+      boilerNowStatus:-1,
+      boilerSta_time:"",
+      boilers:[],
+
+      w:0,
+      w2:0,
+      h2:0,
+    }
+  },
+  watch:{
+    
+  },
+  computed:{
+
+  },
+  methods: {
+    // g1over(t,p){
+    //   if(p==1){
+    //     t.style.fillOpacity=0.7;
+    //   }else{
+    //     t.style.fillOpacity=0;
+    //   }
+    // }
+    init: function () {
+        let container = document.getElementById('svg')
+        this.camera = new Three.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.01, 10)
+        this.camera.position.z = 0.6
+        this.scene = new Three.Scene()
+        let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2)
+        let material = new Three.MeshNormalMaterial()
+        this.mesh = new Three.Mesh(geometry, material)
+        this.scene.add(this.mesh)
+
+        this.renderer = new Three.WebGLRenderer({antialias: true})
+        this.renderer.setSize(container.clientWidth, container.clientHeight)
+        container.appendChild(this.renderer.domElement)
+      },
+      animate: function () {
+        requestAnimationFrame(this.animate)
+        this.mesh.rotation.x += 0.01
+        this.mesh.rotation.y += 0.02
+        this.renderer.render(this.scene, this.camera)
+      }
+  },
+  mounted() {
+    let o = this;
+    let screenwidth=window.screen.width;//1050px;//1920
+    o.w = (screenwidth * 1050) /1536;
+    o.h2=(o.w * 1032)/1399;
+    o.w2 = (screenwidth * 380) /1536;
+
+    // o.w  宽   o.h2  高
+    // 3个区域
+    // let ly = document.getElementById("path8257");
+    // ly.addEventListener('mouseover',function(){o.g1over(this,1)},false);
+    // ly.addEventListener('mouseout',function(){o.g1over(this,0)},false);
+
+    // let ly2 = document.getElementById("path8471");
+    // ly2.addEventListener('mouseover',function(){o.g1over(this,1)},false);
+    // ly2.addEventListener('mouseout',function(){o.g1over(this,0)},false);
+
+    // let ly3 = document.getElementById("path8488");
+    // ly3.addEventListener('mouseover',function(){o.g1over(this,1)},false);
+    // ly3.addEventListener('mouseout',function(){o.g1over(this,0)},false);
+    this.init();
+    this.animate();
+  },
+  beforeDestroy() {
+  }
+};
+</script>
+<style scoped>
+a{
+  cursor: pointer;
+}
+</style>
+
+
+
+
+
