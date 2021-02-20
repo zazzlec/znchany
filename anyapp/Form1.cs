@@ -426,24 +426,34 @@ namespace anyapp
             DateTime nowtime = DateTime.Now;
             for (int i = 0; i < ja.Count(); i++)
             {
-                var item = ja[i];
-                var name = item["tag"].ToString();
-                if (item["item"]["DV"] != null)
+                try
                 {
-                    // value = int.Parse(item["item"]["DV"].ToString());
-                    value = ((int.Parse(item["item"]["DV"].ToString())) & 8) / 8;//取出来的数值是2和10，需要取二进制第4位的值
-                    timestamp = long.Parse(item["item"]["timestamp"].ToString());//锦界环境
-                    nowtime = ConvertLongToDateTime(timestamp);//锦界环境
-                }
-                else
-                {
-                    AddLog(db, "tag:" + name + " 吹灰器状态异常", 114);
-                    value = 999;
-                }
+                    var item = ja[i];
+                    var name = item["tag"].ToString();
+                    if (item["item"]["DV"] != null)
+                    {
+                        // value = int.Parse(item["item"]["DV"].ToString());
+                        value = ((int.Parse(item["item"]["DV"].ToString())) & 8) / 8;//取出来的数值是2和10，需要取二进制第4位的值
+                        timestamp = long.Parse(item["item"]["timestamp"].ToString());//锦界环境
+                        nowtime = ConvertLongToDateTime(timestamp);//锦界环境
+                    }
+                    else
+                    {
+                        AddLog(db, "tag:" + name + " 吹灰器状态异常", 114);
+                        AddLog(db, "tag:" + name + " 数据读取返回错误", 102);
+                        value = 999;
+                    }
 
 
-                string sql_up_pvalue = "update dncchqkks set Pvalue=" + value + ",RealTime='" + nowtime + "' where kkscode='" + name + "' and DncBoilerId=" + bid;
-                arr.Add(sql_up_pvalue);
+                    string sql_up_pvalue = "update dncchqkks set Pvalue=" + value + ",RealTime='" + nowtime + "' where kkscode='" + name + "' and DncBoilerId=" + bid;
+                    arr.Add(sql_up_pvalue);
+                }
+                catch (Exception  ee)
+                {
+
+                    AddLog(db, "通了但是数据读取出错:"+ee.Message, 103);
+                }
+                
 
             }
             db.ExecuteTransaction(arr);
@@ -1215,8 +1225,9 @@ namespace anyapp
 
 
                 #region 长吹半吹（除分级省煤器），按区域计算污染率，加入执行列表
-                if (yl_fh_out > 400)
+                if (yl_fh_out > 300)
                 {
+                    
                     string sql_fh = "select Fh_Val from dncfhdata ORDER BY RealTime DESC LIMIT 11";
                     DataTable dt_fh = db.GetCommand(sql_fh);
                     bool a = true;
@@ -1322,8 +1333,8 @@ namespace anyapp
                                     else
                                     {
                                         arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','" + realtime + "','" + realtime + "','短吹非周期性吹灰',0,1," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
-                                        arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + chq_name + "';");
-                                        arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                                        //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + chq_name + "';");
+                                        //arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                                     }
 
                                     db.ExecuteTransaction(arrsql);
@@ -1353,8 +1364,8 @@ namespace anyapp
                                     else
                                     {
                                         sql_chlist_add.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item[1].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','尾部烟道多天未吹(常规)',0,1," + item[0].ToString() + ",'" + item[1].ToString() + "'," + bid + ",'" + bid + "号锅炉',null,null);");
-                                        sql_chlist_add.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item[1].ToString() + "';");
-                                        sql_chlist_add.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                                        //sql_chlist_add.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item[1].ToString() + "';");
+                                        //sql_chlist_add.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                                     }
                                 }
                             }
@@ -1372,7 +1383,7 @@ namespace anyapp
 
                             List<string> sql_chlist_add2 = new List<string>();
 
-                            if ( hour_fh6 >= 6)
+                            if (hour_fh6 >= 6)
                             {
                                 string sql_fh6_point = "select Id,Name_kw,DncBoilerId,DncBoiler_Name from dncchqpoint where DncBoilerId=" + bid + " and (Name_kw='IK21' or Name_kw='IK22')";
                                 DataTable dt_fh6_p = db.GetCommand(sql_fh6_point);
@@ -1385,8 +1396,8 @@ namespace anyapp
                                     else
                                     {
                                         sql_chlist_add2.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item[1].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','低负荷超时(常规)',0,1," + item[0].ToString() + ",'" + item[1].ToString() + "'," + bid + ",'" + bid + "号锅炉',null,null);");
-                                        sql_chlist_add2.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item[1].ToString() + "';");
-                                        sql_chlist_add2.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                                        //sql_chlist_add2.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item[1].ToString() + "';");
+                                        //sql_chlist_add2.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                                     }
                                 }
                             }
@@ -1413,12 +1424,12 @@ namespace anyapp
                                 string v2 = item[11].ToString();
                                 string v3 = item[12].ToString();
                                 string vup = item[13].ToString();
-                                string hasrun = "select * from dncchrunlist where DncBoilerId="+bid+" and DncchareId="+id+" and OffTime is null;";
+                                string hasrun = "select * from dncchrunlist where DncBoilerId=" + bid + " and DncchareId=" + id + " and OffTime is null;";
                                 if (db.GetCommand(hasrun).Rows.Count == 0)
                                 {
                                     hasrun = "select TIMESTAMPDIFF(MINUTE,OffTime,now()) from dncchrunlist where DncBoilerId=" + bid + " and DncchareId=" + id + " order by OffTime desc;";
-                                    int min=int.Parse(db.GetCommand(hasrun).Rows[0][0].ToString());
-                                    if (min>=5)
+                                    int min = int.Parse(db.GetCommand(hasrun).Rows[0][0].ToString());
+                                    if (min >= 10)
                                     {
                                         List<string> xuliearr = new List<string>();
                                         double aval = double.Parse(Wrlhigh_Val);
@@ -1431,8 +1442,15 @@ namespace anyapp
                                         int nownumber_v = int.Parse(NowNumber);
                                         int totlenumber_v = int.Parse(TotleNumber);
 
-                                        if (nval> aval)
+
+                                        //double dg_dbkd_left = Compute.Avgdata(dic["73"]);//低过挡板开度（左侧）
+                                        //double dg_dbkd_right = Compute.Avgdata(dic["74"]);//低过挡板开度（右侧）
+                                        //double dz_dbkd_left = Compute.Avgdata(dic["75"]);//低再挡板开度（左侧）
+                                        //double dz_dbkd_right = Compute.Avgdata(dic["76"]);//低再挡板开度（右侧）
+
+                                        if (nval > aval && DD(id, dg_dbkd_left, dg_dbkd_right, dz_dbkd_left, dz_dbkd_right))
                                         {
+
                                             //是否到两小时了
                                             int timein = 0;
                                             //轮次为0时，先更新轮次为1，时间为当前时间
@@ -1446,14 +1464,14 @@ namespace anyapp
                                             {
                                                 hasrun = "select TIMESTAMPDIFF(MINUTE,PreTime,now()) from dnccharea where id=" + id;
                                                 min = int.Parse(db.GetCommand(hasrun).Rows[0][0].ToString());
-                                                if (min>=120)
+                                                if (min >= 120)
                                                 {
                                                     string luncissq2 = "update dnccharea set TwoHour=1 where id=" + id;
                                                     db.CommandExecuteNonQuery(luncissq2);
                                                     timein = 1;
                                                 }
                                             }
-                                            
+
 
 
                                             if (TwoHour.Equals("0"))
@@ -1474,52 +1492,62 @@ namespace anyapp
                                                         else
                                                         {
                                                             xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
-                                                            xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
-                                                            xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                                                            //xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
+                                                            //xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                                                         }
                                                     }
                                                     xuliearr.Add("update dnccharea set All_sta=1 where id=" + id);
                                                 }
 
+                                                if (!DD(id, dg_dbkd_left, dg_dbkd_right, dz_dbkd_left, dz_dbkd_right))
+                                                {
+                                                    if (nval <= aval + vv3 && nval > aval + vv2)
+                                                    {
+                                                        string cc = "";
+                                                        if (totlenumber_v == 3)
+                                                        {
+                                                            cc = ",All_sta=1";
+                                                        }
+                                                        string luncissq6 = "update dnccharea set NowNumber=0" + cc + "  where id=" + id;
+                                                        db.CommandExecuteNonQuery(luncissq6);
+                                                        xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, "1,2,3"));
+                                                    }
+                                                    else if (nval <= aval + vv2 && nval > aval + vv1)
+                                                    {
+                                                        string cc = "";
+                                                        if (totlenumber_v == 2)
+                                                        {
+                                                            cc = ",All_sta=1";
+                                                        }
+                                                        string luncissq6 = "update dnccharea set NowNumber=0" + cc + "  where id=" + id;
+                                                        db.CommandExecuteNonQuery(luncissq6);
+                                                        xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, "1,2"));
+                                                    }
+                                                    else if (nval <= aval + vv1)
+                                                    {
+                                                        string luncissq6 = "update dnccharea set NumberTo=0  where id=" + id;
+                                                        db.CommandExecuteNonQuery(luncissq6);
+                                                        xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, "1"));
+                                                    }
+                                                }
+
+
                                             }
                                             //timein==1 就是刚到2小时
-                                            if (TwoHour.Equals("1")|| timein==1)
+                                            if (TwoHour.Equals("1") || timein == 1)
                                             {
 
                                                 if (nval <= aval + vv3 && nval > aval + vv2)
                                                 {
                                                     string cc = "";
-                                                    if (totlenumber_v ==3 )
+                                                    if (totlenumber_v == 3)
                                                     {
                                                         cc = ",All_sta=1";
                                                     }
-                                                    string luncissq6 = "update dnccharea set NowNumber=3"+cc+"  where id=" + id;
+                                                    string luncissq6 = "update dnccharea set NowNumber=3" + cc + "  where id=" + id;
                                                     db.CommandExecuteNonQuery(luncissq6);
                                                     xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, "1,2,3"));
-                                                    
-                                                    // 第一，二，三序列吹灰
-                                                    //if (nownumber_v < totlenumber_v)
-                                                    //{
-                                                    //    if (nval >= aval - vv1)
-                                                    //    {
-                                                    //        string cc = "";
-                                                    //        if (totlenumber_v == nownumber_v + 1)
-                                                    //        {
-                                                    //            cc = ",All_sta=1";
-                                                    //        }
-                                                    //        string luncissq6 = "update dnccharea set NowNumber=" + (nownumber_v + 1) + "" + cc + "  where id=" + id;
-                                                    //        db.CommandExecuteNonQuery(luncissq6);
-                                                    //        if (nownumber_v==0)
-                                                    //        {
-                                                    //            xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, "1,2,3"));
-                                                    //        }
-                                                    //        else
-                                                    //        {
-                                                    //            xuliearr.AddRange(JoinInCH(db, id, K_Name_kw, (nownumber_v + 1) + ""));
-                                                    //        }
 
-                                                    //    }
-                                                    //}
                                                 }
                                                 else if (nval <= aval + vv2 && nval > aval + vv1)
                                                 {
@@ -1554,7 +1582,7 @@ namespace anyapp
                                                     //    }
                                                     //}
                                                 }
-                                                else if (nval <= aval + vv1 )
+                                                else if (nval <= aval + vv1)
                                                 {
                                                     string luncissq6 = "update dnccharea set NowNumber=1  where id=" + id;
                                                     db.CommandExecuteNonQuery(luncissq6);
@@ -1584,12 +1612,65 @@ namespace anyapp
                                             db.ExecuteTransaction(xuliearr);
 
 
-                                            
+
                                         }
-                                        
+
                                     }
                                 }
 
+                            }
+                            #endregion
+
+                            #region 分级省煤器
+                            sqlwrl = "select id,K_Name_kw,Wrl_Val,RealTime,Wrlhigh_Val,NumberTo,TwoHour,NowNumber,TotleNumber,PreTime,v1,v2,v3,vup from dnccharea where DncBoilerId=" + bid + "  and K_Name_kw == '分级省煤器'";
+                            dt = db.GetCommand(sqlwrl);
+                            foreach (DataRow item in dt.Rows)
+                            {
+                                string id = item[0].ToString();
+                                string K_Name_kw = item[1].ToString();
+                                string Wrl_Val = item[2].ToString();
+                                string RealTime = item[3].ToString();
+                                string Wrlhigh_Val = item[4].ToString();
+                                string NumberTo = item[5].ToString();
+                                string TwoHour = item[6].ToString();
+                                string NowNumber = item[7].ToString();
+                                string TotleNumber = item[8].ToString();
+                                string PreTime = item[9].ToString();
+                                string v1 = item[10].ToString();
+                                string v2 = item[11].ToString();
+                                string v3 = item[12].ToString();
+                                string vup = item[13].ToString();
+                                string hasrun = "select * from dncchrunlist where DncBoilerId=" + bid + " and DncchareId=" + id + " and OffTime is null;";
+                                if (db.GetCommand(hasrun).Rows.Count == 0)
+                                {
+                                    hasrun = "select TIMESTAMPDIFF(MINUTE,OffTime,now()) from dncchrunlist where DncBoilerId=" + bid + " and DncchareId=" + id + " order by OffTime desc;";
+                                    int min = int.Parse(db.GetCommand(hasrun).Rows[0][0].ToString());
+                                    if (min >= 10)
+                                    {
+                                        double aval = double.Parse(Wrlhigh_Val);
+                                        double nval = double.Parse(Wrl_Val);
+                                        double vv1 = double.Parse(v1);
+                                        double vv2 = double.Parse(v2);
+                                        double vv3 = double.Parse(v3);
+                                        double vvup = double.Parse(vup);
+
+                                        string sql = "select Name_kw,PointId from dncchareanumber where Dncchare_Name ='分级省煤器' and DncBoilerId=" + bid;
+                                        List<string> xuliearr = new List<string>();
+                                        foreach (DataRow item1 in db.GetCommand(sql).Rows)
+                                        {
+                                            if (chmode.Equals("1"))
+                                            {
+                                                xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','污染率超过高值',1,0," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
+                                            }
+                                            else
+                                            {
+                                                xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
+                                                
+                                            }
+                                        }
+                                        db.ExecuteTransaction(xuliearr);
+                                    }
+                                }
                             }
                             #endregion
                         }
@@ -1597,14 +1678,56 @@ namespace anyapp
                 }
                 #endregion
 
-                
-
-
-   
             }
         }
-        #endregion
 
+        /// <summary>
+        /// 挡板条件
+        /// </summary>
+        /// <param name="id">areid</param>
+        /// <param name="dg_dbkd_left">低过挡板开度（左侧）</param>
+        /// <param name="dg_dbkd_right">低过挡板开度（右侧）</param>
+        /// <param name="dz_dbkd_left">低再挡板开度（左侧）</param>
+        /// <param name="dz_dbkd_right">低再挡板开度（右侧）</param>
+        /// <returns></returns>
+        public bool DD(string id,double dg_dbkd_left, double dg_dbkd_right, double dz_dbkd_left, double dz_dbkd_right)
+        {
+            bool flag = true;
+            //低温再热器（左侧）
+            if (id.Equals("8"))
+            {
+                if (dz_dbkd_left < 60)
+                {
+                    flag = false;
+                }
+            }
+            //低温再热器（右侧）
+            else if (id.Equals("9"))
+            {
+                if (dz_dbkd_right < 60)
+                {
+                    flag = false;
+                }
+            }
+            //低温过热器（左侧）
+            else if (id.Equals("10"))
+            {
+                if (dg_dbkd_left < 50)
+                {
+                    flag = false;
+                }
+            }
+            //低温过热器（右侧）
+            else if (id.Equals("11"))
+            {
+                if (dg_dbkd_right < 50)
+                {
+                    flag = false;
+                }
+            }
+            return flag;
+        }
+        #endregion
 
         #region 短吹
         private void DCUI(DBHelper db)
@@ -1668,8 +1791,8 @@ namespace anyapp
                     else
                     {
                         arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('IR" + item + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item + ",'IR" + item + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
-                        arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='IR" + item + "';");
-                        arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                        //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='IR" + item + "';");
+                        //arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                     }
                 }
             }
@@ -1679,15 +1802,13 @@ namespace anyapp
             //int c1 = new Random().Next(24) + 1;
             #endregion
         }
-        #endregion
 
-
-        public bool HasIr(int min,int max)
+        public bool HasIr(int min, int max)
         {
             bool s1 = false;
             foreach (int item in irarr)
             {
-                if (item>=min&&item<=max)
+                if (item >= min && item <= max)
                 {
                     s1 = true;
                     break;
@@ -1695,6 +1816,7 @@ namespace anyapp
             }
             return s1;
         }
+        #endregion
 
         #region 加入吹灰
         public List<string> JoinInCH(DBHelper db, string id,string K_Name_kw,string lun)
@@ -1712,35 +1834,97 @@ namespace anyapp
                 else
                 {
                     xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
-                    xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
-                    xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                    //xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
+                    //xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                 }
             }
             return xuliearr;
         }
         #endregion
 
-
-
-
         #region 锅炉本体吹灰列表执行  30秒
 
         private System.Threading.Timer timerClose2;
         private void backcall2(object o)
         {
-            List<string> arr = (List<string>)o;
             DBHelper db = new DBHelper();
-            var sql = "select DncChstatusId from DncChqpoint where Id=" + arr[0] + " ";
-            DataTable dt = db.GetCommand(sql);
-            if (dt.Rows.Count > 0)
+            List<string> item = (List<string>)o;
+            string DncChqpointId = item[0].ToString();
+            string DncChqpoint_Name = item[1].ToString();
+            string DncChstatusId = item[2].ToString();
+            string dncchrunlistId = item[3].ToString();
+            string Name_kw = item[4].ToString();
+            int DncchareId = int.Parse( item[5].ToString());
+
+            string TwoHour = item[6].ToString();
+            string NowNumber = item[7].ToString();
+            string TotleNumber = item[8].ToString();
+            string PreTime = item[9].ToString();
+            string Wrl_Val = item[10].ToString();
+            string Wrlhigh_Val = item[11].ToString();
+            string NumberTo = item[12].ToString();
+            string All_sta = item[13].ToString();
+
+            double vv1 = double.Parse(item[14].ToString());
+            double vv2 = double.Parse(item[15].ToString());
+            double vv3 = double.Parse(item[16].ToString());
+            double vvup = double.Parse(item[17].ToString());
+
+            double nval = double.Parse(Wrl_Val);
+            double aval = double.Parse(Wrlhigh_Val);
+
+            string csql = "select Wrl_Val,Wrlhigh_Val  from dnccharea where id=" + DncchareId;
+            DataTable dt = db.GetCommand(csql);
+            nval = double.Parse(dt.Rows[0][0].ToString());
+            aval = double.Parse(dt.Rows[0][1].ToString());
+
+            if (DncchareId>=2 && DncchareId<=13 )
             {
-                if (dt.Rows[0][0].ToString().Equals("1"))
+                if (All_sta.Equals("1"))
                 {
-                    DoChui(db, arr[1], arr[2], arr[3], arr[4], arr[0]);
-                    //string sqloff = "update dncchrunlist set OffTime='" + DateTime.Now + "'  where Id=" + arr[3];
-                    //db.CommandExecuteNonQuery(sqloff);
+                    string luncissq6 = "update dnccharea set NowNumber=0,All_sta=0,TwoHour=0,PreTime=null,NumberTo=0,Wrlhigh_Val= Wrlhigh_Val+Vup  where id=" + DncchareId;
+                    db.CommandExecuteNonQuery(luncissq6);
+                }
+                else if(NumberTo.Equals("1") && int.Parse(NowNumber)< int.Parse(TotleNumber) )
+                {
+                    if (nval <= aval - vv1)
+                    {
+                        string luncissq6 = "update dnccharea set NowNumber=0,All_sta=0,TwoHour=0,PreTime=null,NumberTo=0  where id=" + DncchareId;
+                        db.CommandExecuteNonQuery(luncissq6);
+                    }
+                    else
+                    {
+                        string sql_point = "select DncTypeId,Pvalue from dncchhzpointnow where  DncBoilerId=" + bid+" and DncTypeId in (73,74,75,76)";
+                        DataTable dt_point = db.GetCommand(sql_point);
+
+                        double dg_dbkd_left = Compute.Avgdata(dt_point.Rows[0][1].ToString());//低过挡板开度（左侧）
+                        double dg_dbkd_right = Compute.Avgdata(dt_point.Rows[1][1].ToString());//低过挡板开度（右侧）
+                        double dz_dbkd_left = Compute.Avgdata(dt_point.Rows[2][1].ToString());//低再挡板开度（左侧）
+                        double dz_dbkd_right = Compute.Avgdata(dt_point.Rows[3][1].ToString());//低再挡板开度（右侧）
+
+                        if (DD(DncchareId+"", dg_dbkd_left, dg_dbkd_right, dz_dbkd_left, dz_dbkd_right))
+                        {
+                            string luncissq6 = "update dnccharea set NowNumber=" + (int.Parse(NowNumber) + 1) + " where id=" + DncchareId;
+                            db.CommandExecuteNonQuery(luncissq6);
+                            List<string> xuliearr = new List<string>();
+                            xuliearr.AddRange(JoinInCH(db, DncchareId + "", Name_kw, (int.Parse(NowNumber) + 1) + ""));
+
+                            if ((int.Parse(NowNumber) + 1) == int.Parse(TotleNumber))
+                            {
+                                xuliearr.Add("update dnccharea set All_sta=1  where id=" + DncchareId);
+
+                            }
+                            db.ExecuteTransaction(xuliearr);
+                        }
+                    }
                 }
             }
+            else if (DncchareId == 1)
+            {
+                string luncissq6 = "update dncchqpoint set last_temp_dif_Val=now_temp_dif_Val  where id=" + DncChqpointId;
+                db.CommandExecuteNonQuery(luncissq6);
+            }
+
             timerClose2.Dispose();
         }
 
@@ -1754,181 +1938,92 @@ namespace anyapp
             }
 
 
-            string sql = "select q.DncChqpointId,q.DncChqpoint_Name,p.DncChstatusId,q.Id from dncchrunlist q inner join dncchqpoint p on q.DncChqpointId=p.Id where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is not null";
+            string sql = "select q.DncChqpointId,q.DncChqpoint_Name,p.DncChstatusId,q.Id,q.Name_kw,q.DncchareId,a.TwoHour,a.NowNumber,a.TotleNumber,a.PreTime,a.Wrl_Val,a.Wrlhigh_Val,a.NumberTo,a.All_sta,a.V1,a.V2,a.V3,a.Vup  from dncchrunlist q inner join dncchqpoint p on q.DncChqpointId=p.Id inner join dnccharea a on a.id=q.DncchareId where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is not null";
             var rdt = db.GetCommand(sql);
             //有正在执行吹灰的吹灰器
             if (rdt.Rows.Count > 0)
             {
                 foreach (DataRow item in rdt.Rows)
                 {
+                    string DncChqpointId = item[0].ToString();
+                    string DncChqpoint_Name = item[1].ToString();
                     string DncChstatusId = item[2].ToString();
-                    if (DncChstatusId.Equals("1"))
+                    string dncchrunlistId = item[3].ToString();
+                    string Name_kw = item[4].ToString();
+                    int DncchareId = int.Parse(item[5].ToString());
+
+                    string TwoHour = item[6].ToString();
+                    string NowNumber = item[7].ToString();
+                    string TotleNumber = item[8].ToString();
+                    string PreTime = item[9].ToString();
+                    string Wrl_Val = item[10].ToString();
+                    string Wrlhigh_Val = item[11].ToString();
+                    string NumberTo = item[12].ToString();
+                    string All_sta = item[13].ToString();
+
+                    double vv1 = double.Parse(item[14].ToString());
+                    double vv2 = double.Parse(item[15].ToString());
+                    double vv3 = double.Parse(item[16].ToString());
+                    double vvup = double.Parse(item[17].ToString());
+
+                    double nval = double.Parse(Wrl_Val);
+                    double aval = double.Parse(Wrlhigh_Val);
+
+                    List<string> arrparam = new List<string>();
+                    foreach (var item1 in item.ItemArray)
+                    {
+                        arrparam.Add(item1.ToString());
+                    }
+
+                    if (item[2].ToString().Equals("1"))
                     {
                         sql = "update dncchrunlist set OffTime='" + nowtime + "',Status=0 where Id=" + item[3].ToString();
                         db.CommandExecuteNonQuery(sql);
                         sql = "update dncchqpoint set Lastchtime='" + nowtime + "' where DncBoilerId=" + bid + " and Name_kw='" + item[1].ToString() + "'";
                         db.CommandExecuteNonQuery(sql);
 
-                        timerClose = new System.Threading.Timer(new TimerCallback(backcall2), new List<string>() {  }, 10*60000, 0);
-
+                        //string ss = "select 1 from dncchrunlist where ";
+                        if (DncchareId >= 2 && DncchareId <= 13)
+                        {
+                            string hasrun = "select * from dncchrunlist where DncBoilerId=" + bid + " and DncchareId=" + DncchareId + " and Status=1 and IsDeleted=0;";
+                            if (db.GetCommand(hasrun).Rows.Count == 0)
+                            {
+                                timerClose2 = new System.Threading.Timer(new TimerCallback(backcall2), arrparam, 10 * 60000, 0);
+                            }
+                        }
+                        else if ( DncchareId == 1 )
+                        {
+                            timerClose2 = new System.Threading.Timer(new TimerCallback(backcall2), arrparam, 10 * 60000, 0);
+                        }
                     }
                 }
             }
-
-
-
-
-
             //沒有正在执行吹灰的吹灰器
-            //else
-            //{
-
-            //吹灰完成更新轮次为0，Wrlhigh_Val=Wrlhigh_Val+0.05
-            //double anew = aval + vvup;
-            //string luncissq3 = "update dnccharea set NumberTo=0,TwoHour=0,NowNumber=0,TotleNumber=0,Wrlhigh_Val=" + anew + " where id=" + id;
-            //db.CommandExecuteNonQuery(luncissq3);
-
-            //刚加入未执行的
-            //sql = "select q.Name_kw,p.Kks,p.Pmode,q.Id,q.DncChqpointId from dncchrunlist q inner join dncchqpoint_zt  p on q.DncChqpointId=p.DncChqpointId where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is null and p.Kind=1 order by q.Id  limit 1";
-            //DataTable dt = db.GetCommand(sql);
-            //if (dt.Rows.Count > 0)
-            //{
-            //    string tag = dt.Rows[0][1].ToString();
-            //    string pmode = dt.Rows[0][2].ToString();
-            //    string Name_kw = dt.Rows[0][0].ToString();
-            //    string id = dt.Rows[0][3].ToString();
-            //    string pid = dt.Rows[0][4].ToString();
-
-
-            //    string c = "select Ss_sta from dncboiler where id=" + bid;
-            //    DataTable dtc = db.GetCommand(c);
-            //    if (dtc.Rows.Count > 0)
-            //    {
-            //        string ss_st = dtc.Rows[0][0].ToString();
-            //        if (ss_st.Equals("0") || ss_st.Equals(""))
-            //        {
-            //            //疏水
-            //            bool b = DoShui();
-            //            if (b)
-            //            {
-            //                c = "update dncboiler set Ss_sta='1' where id=" + bid;
-            //                db.CommandExecuteNonQuery(c);
-            //            }
-            //        }
-            //        else if (ss_st.Equals("1"))
-            //        {
-
-            //            string s = "{\"tags\":[{\"items\":[\"AV\"],\"namespace\": \"" + nspace + "\",\"tag\":\"HCB10CT602\"},{\"items\":[\"AV\"],\"namespace\": \"" + nspace + "\",\"tag\":\"HCB10CT603\"},{\"items\":[\"AV\"],\"namespace\": \"" + nspace + "\",\"tag\":\"HCB10CT604\"},{\"items\":[\"AV\"],\"namespace\": \"" + nspace + "\",\"tag\":\"HCB10CT605\"}]}";
-
-            //            JToken ja = JinJieHttp(s);
-            //            double value = 0;
-            //            bool b = true;
-            //            for (int i = 0; i < ja.Count(); i++)
-            //            {
-            //                var item = ja[i];
-            //                var name = item["tag"].ToString();
-            //                if (item["item"]["AV"] != null)
-            //                {
-            //                    value = double.Parse(item["item"]["AV"].ToString());
-            //                }
-            //                else
-            //                {
-            //                    value = 999;
-            //                }
-            //                if (value < 230)
-            //                {
-            //                    b = false;
-            //                    break;
-            //                }
-            //            }
-
-            //            ja = JinJieHttp("HCB10CP101", "AV");
-            //            double d = double.Parse(ja[0]["item"]["AV"].ToString());
-            //            if (d < 1)
-            //            {
-            //                b = false;
-            //            }
-            //            //温度  压力 达到之后，修改状态为2
-
-            //            if (b)
-            //            {
-            //                c = "update dncboiler set Ss_sta='2' where id=" + bid;
-            //                db.CommandExecuteNonQuery(c);
-            //            }
-
-            //        }
-            //        else if (ss_st.Equals("2"))
-            //        {
-            //            //智能化吹灰调用
-            //            DoChui(db, tag, pmode, id, Name_kw, pid);
-            //        }
-            //    }
-            //}
-            //}
-        }
-
-
-
-
-
-        //private void SS(DBHelper db)
-        //{
-        //    string c = "select Ss_sta from dncboiler where id=" + bid;
-        //    DataTable dtc = db.GetCommand(c);
-        //    if (dtc.Rows.Count > 0)
-        //    {
-        //        string ss_st = dtc.Rows[0][0].ToString();
-        //        if (!ss_st.Equals("2"))
-        //        {
-        //            //疏水
-        //            bool b = DoShui();
-        //            c = "update dncboiler set Ss_sta='1' where id=" + bid;
-        //        }
-        //    }
-        //}
-
-
-
-        private bool DoShui()
-        {
-            //智能化吹灰调用
-            bool b = JinJieHttpDo("ZHDRHSBWSQR", "DI");
-            int donum = 0;
-            while (!b)
-            {
-                b = JinJieHttpDo("ZHDRHSBWSQR", "DI");
-                ++donum;
-                if (donum >= 5)
-                {
-                    break;
-                }
-            }
-            if (donum >= 5)
-            {
-                throw new Exception("疏水程控调用失败！");
-            }
             else
             {
-                bool b2 = JinJieHttpDo("ZHDRHSBWSQR", "DI", "0");
-                donum = 0;
-                while (!b2)
+
+                //刚加入未执行的
+                sql = "select q.Name_kw,p.Kks,p.Pmode,q.Id,q.DncChqpointId from dncchrunlist q inner join dncchqpoint_zt  p on q.DncChqpointId=p.DncChqpointId where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is null and p.Kind=1 order by q.DncchareId,q.Id  limit 1";
+                DataTable dt = db.GetCommand(sql);
+                if (dt.Rows.Count > 0)
                 {
-                    b2 = JinJieHttpDo("ZHDRHSBWSQR", "DI", "0");
-                    ++donum;
-                    if (donum >= 5)
-                    {
-                        break;
-                    }
-                }
-                if (donum >= 5)
-                {
-                    throw new Exception("疏水信号解除失败！");
+                    string tag = dt.Rows[0][1].ToString();
+                    string pmode = dt.Rows[0][2].ToString();
+                    string Name_kw = dt.Rows[0][0].ToString();
+                    string id = dt.Rows[0][3].ToString();
+                    string pid = dt.Rows[0][4].ToString();
+
+                    //智能化吹灰调用
+                    DoChui(db, tag, pmode, id, Name_kw, pid);
+
+                    
                 }
             }
-            return b;
         }
 
 
+      
+        #region dochui
         private void DoChui(DBHelper db, string tag, string pmode, string id, string Name_kw, string pid)
         {
             //智能化吹灰调用
@@ -1947,6 +2042,7 @@ namespace anyapp
 
             if (donum >= 5)
             {
+                AddLog(db, "tag:" + tag + " 单吹指令未执行", 105);
                 throw new Exception(Name_kw + "吹灰器自启调用失败！");
             }
             else
@@ -1968,9 +2064,11 @@ namespace anyapp
                 }
                 else
                 {
-                    string sql = "update dncchrunlist set RunTime='" + DateTime.Now + "'  where Id=" + id;
+                    string sql = "update dncchrunlist set RunTime=now()  where Id=" + id;
                     db.CommandExecuteNonQuery(sql);
-
+                    
+                    db.CommandExecuteNonQuery("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + Name_kw + "';");
+                    //30秒后看看，没吹继续调吹
                     var timerClose = new System.Threading.Timer(new TimerCallback(backcall), new List<string>() { pid, tag, pmode, id, Name_kw }, 30000, 0);
                 }
             }
@@ -1997,6 +2095,9 @@ namespace anyapp
         }
 
         #endregion
+
+
+#endregion
 
         #region 空预器吹灰列表执行  30秒
         private void KyqChRun(DBHelper db)
@@ -2057,6 +2158,7 @@ namespace anyapp
                         ii++;
                         if (ii >= 5)
                         {
+                            AddLog(db, "空预器吹灰选择汽源失败", 109);
                             throw new Exception("空预器吹灰选择汽源失败！");
                         }
                     } while (!b1);
@@ -2077,6 +2179,7 @@ namespace anyapp
                     }
                     if (donum >= 5)
                     {
+                        AddLog(db, "空预器程控吹灰未执行", 111);
                         throw new Exception("空预器吹灰程控信号发送失败！");
                     }
                     else
@@ -2111,6 +2214,109 @@ namespace anyapp
         }
 
         #endregion
+
+       
+        #region 获取吹灰模式  15秒
+        private string chmode = "0";
+        private string GetChMode(DBHelper db)
+        {
+            JToken ja2 = JinJieHttp("DMSBWZNSEL", "DV");
+            return ja2[0]["item"]["DV"].ToString();
+        }
+        #endregion
+
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            timer1.Start();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+
+        private int c = 1;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            c++;
+            try
+            {
+                //todo
+                DBHelper db = DB();
+
+
+                string ret = HttpHelpercs.gettoken();
+
+
+                //15秒 更新吹灰器状态
+                if (c % (1 * 3) == 0)
+                {
+                    RefreshState(db);
+                }
+
+                //1分钟一次 获取机组负荷
+                if (c % (1 * 12) == 0)
+                {
+                    GetFH(db);
+                }
+                //5分钟一次 获取测点数据
+                if (c % (5 * 12) == 0)
+                {
+                    WRLPoint(db);//realtime 赋值
+
+                    // AddLgoToTXT("2169: "+realtime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    //调接口读取并更新96个吹灰点的鳍片温度值和背火侧温度值 和 燃烧区域漆片温度
+                    CHPoint(db);
+
+                    // AddLgoToTXT("2173: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
+                }
+
+                //5分钟一次  计算污染率，加入待吹灰列表，空预器吹灰器加入执行列表
+                if (c % (5 * 12) == 0)
+                {
+                    // AddLgoToTXT("2186: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
+                    JSWRL(db);
+                    //  AddLgoToTXT("2187: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
+                }
+
+                //短吹 1小时一次
+                if (c% (60*12)==0)
+                {
+                    DCUI(db);
+                }
+
+                //30秒一次   吹灰列表执行
+                if (c % (1 * 6) == 0)
+                {
+                    ChRun(db);
+                    KyqChRun(db);
+                }
+
+
+
+
+            }
+            catch (Exception rrr)
+            {
+
+                AddLgoToTXT(rrr.Message + "\n " + rrr.StackTrace);
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         #region 待吹灰加入执行列表  1
         /// <summary>
@@ -2236,7 +2442,7 @@ namespace anyapp
                             value2 = 999;
                         }
                         int zhnum = 0;
-                        if (!string.IsNullOrEmpty(sql_runlist.ToString()) && value2 > 460)
+                        if (!string.IsNullOrEmpty(sql_runlist.ToString()) && value2 > 400)
                         {
                             // AddLgoToTXT(DateTime.Now.ToString() + ":"+ sql_runlist.ToString());
                             zhnum = db.CommandExecuteNonQuery(sql_runlist.ToString());
@@ -2255,102 +2461,68 @@ namespace anyapp
         }
         #endregion
 
-        #region 获取吹灰模式  15秒
-        private string chmode = "0";
-        private string GetChMode(DBHelper db)
-        {
-            JToken ja2 = JinJieHttp("DMSBWZNSEL", "DV");
-            return ja2[0]["item"]["DV"].ToString();
-        }
+
+        #region doshui 弃用
+
+
+        //private void SS(DBHelper db)
+        //{
+        //    string c = "select Ss_sta from dncboiler where id=" + bid;
+        //    DataTable dtc = db.GetCommand(c);
+        //    if (dtc.Rows.Count > 0)
+        //    {
+        //        string ss_st = dtc.Rows[0][0].ToString();
+        //        if (!ss_st.Equals("2"))
+        //        {
+        //            //疏水
+        //            bool b = DoShui();
+        //            c = "update dncboiler set Ss_sta='1' where id=" + bid;
+        //        }
+        //    }
+        //}
+
+
+
+        //private bool DoShui()
+        //{
+        //    //智能化吹灰调用
+        //    bool b = JinJieHttpDo("ZHDRHSBWSQR", "DI");
+        //    int donum = 0;
+        //    while (!b)
+        //    {
+        //        b = JinJieHttpDo("ZHDRHSBWSQR", "DI");
+        //        ++donum;
+        //        if (donum >= 5)
+        //        {
+        //            break;
+        //        }
+        //    }
+        //    if (donum >= 5)
+        //    {
+        //        throw new Exception("疏水程控调用失败！");
+        //    }
+        //    else
+        //    {
+        //        bool b2 = JinJieHttpDo("ZHDRHSBWSQR", "DI", "0");
+        //        donum = 0;
+        //        while (!b2)
+        //        {
+        //            b2 = JinJieHttpDo("ZHDRHSBWSQR", "DI", "0");
+        //            ++donum;
+        //            if (donum >= 5)
+        //            {
+        //                break;
+        //            }
+        //        }
+        //        if (donum >= 5)
+        //        {
+        //            throw new Exception("疏水信号解除失败！");
+        //        }
+        //    }
+        //    return b;
+        //}
         #endregion
 
 
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            timer1.Start();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            timer1.Stop();
-        }
-
-
-        private int c = 1;
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            c++;
-            try
-            {
-                //todo
-                DBHelper db = DB();
-
-
-                string ret = HttpHelpercs.gettoken();
-
-
-                //15秒 更新吹灰器状态
-                if (c % (1 * 3) == 0)
-                {
-                    RefreshState(db);
-                }
-
-                //1分钟一次 获取机组负荷
-                if (c % (1 * 12) == 0)
-                {
-                    GetFH(db);
-                }
-                //5分钟一次 获取测点数据
-                if (c % (5 * 12) == 0)
-                {
-                    WRLPoint(db);//realtime 赋值
-
-                    // AddLgoToTXT("2169: "+realtime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    //调接口读取并更新96个吹灰点的鳍片温度值和背火侧温度值 和 燃烧区域漆片温度
-                    CHPoint(db);
-
-                    // AddLgoToTXT("2173: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
-                }
-                //3分钟一次 执行吹灰30分钟后更新上次鳍片温度和背火侧温差
-                //if (c % (3 * 12) == 0)
-                //{
-                //    //执行吹灰30分钟后更新上次鳍片温度和背火侧温差
-                //    //AfterCH30(db);
-
-                //    //  AddLgoToTXT("2181: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
-                //}
-                //5分钟一次  计算污染率，加入待吹灰列表，空预器吹灰器加入执行列表
-                if (c % (5 * 12) == 0)
-                {
-                    // AddLgoToTXT("2186: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
-                    JSWRL(db);
-                    //  AddLgoToTXT("2187: " + realtime.ToString("yyyy-MM-dd HH:mm:ss"));
-                }
-
-                //短吹 1小时一次
-                if (c% (60*12)==0)
-                {
-                    DCUI(db);
-                }
-
-                //30秒一次   吹灰列表执行
-                if (c % (1 * 6) == 0)
-                {
-                    ChRun(db);
-                    KyqChRun(db);
-                }
-
-
-
-
-            }
-            catch (Exception rrr)
-            {
-
-                AddLgoToTXT(rrr.Message + "\n " + rrr.StackTrace);
-            }
-
-        }
     }
 }
