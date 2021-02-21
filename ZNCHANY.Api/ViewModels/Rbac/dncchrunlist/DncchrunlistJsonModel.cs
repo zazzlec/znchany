@@ -6,7 +6,7 @@ namespace ZNCHANY.Api.ViewModels.Rbac.Dncchrunlist
 {
 	public class DncchrunlistJsonModel
 	{
-
+        public System.String pause { get; set; }
         /// <summary>
         /// 区域
         /// </summary>
