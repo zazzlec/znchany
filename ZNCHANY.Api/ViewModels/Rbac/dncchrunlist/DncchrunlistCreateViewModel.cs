@@ -9,7 +9,7 @@ namespace ZNCHANY.Api.ViewModels.Rbac.Dncchrunlist
     
         public System.Int32 Id = 0;
 
-
+        public System.String pause { get; set; }
         /// <summary>
         /// 区域
         /// </summary>

@@ -10,12 +10,12 @@ namespace ZNCHANY.Api.Entities
 	[Serializable]
 	public class Dncchrunlist
 	{
-    
-    
-    
+
+
+        public System.String pause { get; set; }
         /// <summary>
-    	/// 序号
-    	/// </summary>
+        /// 序号
+        /// </summary>
         [Key,Required]
    
         public System.Int32 Id { get; set; } 

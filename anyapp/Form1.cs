@@ -1040,6 +1040,7 @@ namespace anyapp
                 }
                 double jws_1 = jws_1_left + jws_1_right;//一级减温水总量
 
+
                 double hz_jwq_front_2_left = Steamhz(pg_out_temp_left, mg_in_press_left); //二级减温器前过热蒸汽焓值（左侧）
                 double hz_jwq_back_2_left = Steamhz(mg_in_temp_left, mg_in_press_left); //二级减温器后过热蒸汽焓值（左侧）
                 double hz_jwq_front_2_right = Steamhz(pg_out_temp_right, mg_in_press_right); //二级减温器前过热蒸汽焓值（右侧）
@@ -1056,6 +1057,9 @@ namespace anyapp
                     jws_2_right = 0;
                 }
                 double jws_2 = jws_2_left + jws_2_right;//二级减温水总量
+
+
+                db.CommandExecuteNonQuery("update dncboiler set jws_1="+ jws_1 + ",jws_2=" + jws_2 + " where id=" + bid);
 
                 double sjzr_grzq = 0.0017 * Math.Pow(yl_fh_out / 100, 3) - 0.0175 * Math.Pow(yl_fh_out / 100, 2) + 0.0381 * (yl_fh_out / 100) + 0.8318;//设计再热/过热蒸汽流量比
                 double grq_jws = jws_1 + jws_2;//过热器减温水总量
@@ -1786,7 +1790,7 @@ namespace anyapp
                 {
                     if (chmode.Equals("1"))
                     {
-                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('IR" + item + "','" + realtime + "','短吹常规',1,0," + item + ",'IR" + item + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('IR" + item + "','" + realtime + "','周期性短吹',1,0," + item + ",'IR" + item + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
                     }
                     else
                     {
@@ -1928,6 +1932,77 @@ namespace anyapp
             timerClose2.Dispose();
         }
 
+        private void pauserun(DBHelper db)
+        {
+            string sql = "select 1 from dncchrunlist where DncBoilerId=" + bid + " and Remarks='周期性短吹' and pause <> 1 and  OffTime is null";
+            DataTable dto = db.GetCommand(sql);
+            if (dto.Rows.Count > 0)
+            {
+                sql = "select jws_1,jws_2 from dncboiler where Id=" + bid + "";
+                DataTable jwsdata = db.GetCommand(sql);
+                double jws1 = double.Parse(jwsdata.Rows[0][0].ToString());
+                double jws2 = double.Parse(jwsdata.Rows[0][1].ToString());
+
+                sql = "select Wrl_Val,Wrl_zqx from dnccharea where DncBoilerId=" + bid + " and K_Name_kw in ('屏式过热器（左侧）','屏式过热器（右侧）')";
+                DataTable wrldata = db.GetCommand(sql);
+                double Wrl_Val = double.Parse(wrldata.Rows[0][0].ToString());
+                double Wrl_zqx = double.Parse(wrldata.Rows[0][1].ToString());
+                double Wrl_Val2 = double.Parse(wrldata.Rows[1][0].ToString());
+                double Wrl_zqx2 = double.Parse(wrldata.Rows[1][1].ToString());
+
+
+                sql = "select Wrl_Val,Wrl_zqx from dnccharea where DncBoilerId=" + bid + " and K_Name_kw in ('高温过热器（左侧）','高温过热器（右侧）')";
+                DataTable ggdata = db.GetCommand(sql);
+                double ggWrl_Val = double.Parse(ggdata.Rows[0][0].ToString());
+                double ggWrl_zqx = double.Parse(ggdata.Rows[0][1].ToString());
+                double ggWrl_Val2 = double.Parse(ggdata.Rows[1][0].ToString());
+                double ggWrl_zqx2 = double.Parse(ggdata.Rows[1][1].ToString());
+
+                bool b = false;
+                int k = 0;
+                if (jws1<5 && (Wrl_Val- Wrl_zqx>0.1 || Wrl_Val2 - Wrl_zqx2 > 0.1)  && jws2<5 && (ggWrl_Val - ggWrl_zqx > 0.075 || ggWrl_Val2 - ggWrl_zqx2 > 0.075))
+                {
+                    b = true;
+                }
+                else
+                {
+                    k++;
+                }
+                if (jws1 < 5 && (Wrl_Val - Wrl_zqx > 0.15 || Wrl_Val2 - Wrl_zqx2 > 0.15))
+                {
+                    b = true;
+                }
+                else
+                {
+                    k++;
+                }
+                if (jws2 < 5 && (ggWrl_Val - ggWrl_zqx > 0.1 || ggWrl_Val2 - ggWrl_zqx2 > 0.1))
+                {
+                    b = true;
+                }
+                else
+                {
+                    k++;
+                }
+                if (b)
+                {
+                    //select OffTime from dncchrunlist where DncBoilerId=" + bid + " and Remarks='周期性短吹' and OffTime is not null order by OffTime desc limit 1";
+                    sql = "update dncchrunlist set pause=1 where DncBoilerId=" + bid + " and Remarks='周期性短吹' and OffTime is  null";
+                    db.CommandExecuteNonQuery(sql);
+                }
+
+
+                string s = "select 1 from dncchrunlist where DncBoilerId=" + bid + " and Remarks='周期性短吹' and pause=1  and OffTime is  null";
+                DataTable dtt = db.GetCommand(s);
+                if (k==3&& dtt.Rows.Count > 0)
+                {
+                    sql = "update dncchrunlist set pause=0 where DncBoilerId=" + bid + " and Remarks='周期性短吹' and OffTime is  null  and pause=1";
+                    db.CommandExecuteNonQuery(sql);
+                }
+
+            }
+        }
+
         private void ChRun(DBHelper db)
         {
             DateTime nowtime = DateTime.Now;
@@ -2003,7 +2078,7 @@ namespace anyapp
             {
 
                 //刚加入未执行的
-                sql = "select q.Name_kw,p.Kks,p.Pmode,q.Id,q.DncChqpointId from dncchrunlist q inner join dncchqpoint_zt  p on q.DncChqpointId=p.DncChqpointId where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is null and p.Kind=1 order by q.DncchareId,q.Id  limit 1";
+                sql = "select q.Name_kw,p.Kks,p.Pmode,q.Id,q.DncChqpointId,q.Remarks from dncchrunlist q inner join dncchqpoint_zt  p on q.DncChqpointId=p.DncChqpointId where q.DncBoilerId=" + bid + " and q.OffTime is null and q.RunTime is null and p.Kind=1 and q.pause<>1 order by q.DncchareId,q.Id  limit 1";
                 DataTable dt = db.GetCommand(sql);
                 if (dt.Rows.Count > 0)
                 {
@@ -2012,6 +2087,33 @@ namespace anyapp
                     string Name_kw = dt.Rows[0][0].ToString();
                     string id = dt.Rows[0][3].ToString();
                     string pid = dt.Rows[0][4].ToString();
+                    string Remarks= dt.Rows[0][5].ToString();
+
+                    if (Remarks.Equals("周期性短吹"))
+                    {
+                        sql = "select OffTime from dncchrunlist where DncBoilerId=" + bid + " and Remarks='周期性短吹' and OffTime is not null order by OffTime desc limit 1";
+                        DataTable dto = db.GetCommand(sql);
+                        bool gx = false;
+                        if (dto.Rows.Count>0)
+                        {
+                            DateTime t1= DateTime.Parse(dt.Rows[0][1].ToString());
+                            int yy=t1.AddMinutes(50).CompareTo(DateTime.Now);
+                            if (yy==-1&&yy==0)
+                            {
+                                gx = true;
+                            }
+                        }
+                        else
+                        {
+                            gx = true;
+                        }
+                        if (gx)
+                        {
+                            sql = "update dnccharea set Wrl_zqx=Wrl_Val where DncBoilerId=" + bid;
+                            db.CommandExecuteNonQuery(sql);
+                        }
+
+                    }
 
                     //智能化吹灰调用
                     DoChui(db, tag, pmode, id, Name_kw, pid);
@@ -2291,6 +2393,7 @@ namespace anyapp
                 //30秒一次   吹灰列表执行
                 if (c % (1 * 6) == 0)
                 {
+                    pauserun(db);
                     ChRun(db);
                     KyqChRun(db);
                 }
