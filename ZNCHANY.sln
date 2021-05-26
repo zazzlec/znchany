@@ -27,10 +27,30 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ZNCHANY.App1", "ZNCHANY.App
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "56750"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_56750"
+		Debug.AspNetCompiler.PhysicalPath = "ZNCHANY.App1\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56750\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_56750"
+		Release.AspNetCompiler.PhysicalPath = "ZNCHANY.App1\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_56750\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "56750"
 		SlnRelativePath = "ZNCHANY.App1\"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anyapp", "anyapp\anyapp.csproj", "{2014279D-BC28-46CB-A3A0-E6A7FD0DA827}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "znrsserver", "znrsserver\znrsserver.csproj", "{93C01070-807E-4B6D-B3CD-33096F655BAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +78,10 @@ Global
 		{2014279D-BC28-46CB-A3A0-E6A7FD0DA827}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2014279D-BC28-46CB-A3A0-E6A7FD0DA827}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2014279D-BC28-46CB-A3A0-E6A7FD0DA827}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C01070-807E-4B6D-B3CD-33096F655BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C01070-807E-4B6D-B3CD-33096F655BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C01070-807E-4B6D-B3CD-33096F655BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C01070-807E-4B6D-B3CD-33096F655BAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
