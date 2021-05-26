@@ -127,7 +127,8 @@ namespace jinjieapp
 
         private bool JinJieHttpDo(string dt_pk, string pmode)
         {
-            string para2 = "{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+            //  string para2 = "[{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+            string para2 = "[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
             string url_realdata = "/macs/v1/realtime/write/writePoints";//锦界
             String r2 = HttpHelpercs.HttpPost(url_realdata, para2);
             JObject rt2 = (JObject)JsonConvert.DeserializeObject(r2);
@@ -138,7 +139,8 @@ namespace jinjieapp
 
         private bool JinJieHttpDo(string dt_pk, string pmode, string value)
         {
-            string para2 = "{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+            // string para2 = "[{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+            string para2 = "[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
             string url_realdata = "/macs/v1/realtime/write/writePoints";//锦界
             String r2 = HttpHelpercs.HttpPost(url_realdata, para2);
             JObject rt2 = (JObject)JsonConvert.DeserializeObject(r2);

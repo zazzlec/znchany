@@ -255,7 +255,9 @@ namespace anyapp
 
         private bool JinJieHttpDo(string dt_pk, string pmode)
         {
-            string para2 = "{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+           // string para2 = "[{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+
+            string para2 = "[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": 1}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
             string url_realdata = "/macs/v1/realtime/write/writePoints";//锦界
             String r2 = HttpHelpercs.HttpPost(url_realdata, para2);
             JObject rt2 = (JObject)JsonConvert.DeserializeObject(r2);
@@ -266,7 +268,9 @@ namespace anyapp
 
         private bool JinJieHttpDo(string dt_pk, string pmode, string value)
         {
-            string para2 = "{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+            //  string para2 = "[{\"tags\":[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
+
+            string para2 = "[{\"items\": [{\"item\": \"" + pmode + "\",\"value\": " + value + "}],\"namespace\": \"" + nspace + "\",\"tag\":\"" + dt_pk + "\"}]";
             string url_realdata = "/macs/v1/realtime/write/writePoints";//锦界
             String r2 = HttpHelpercs.HttpPost(url_realdata, para2);
             JObject rt2 = (JObject)JsonConvert.DeserializeObject(r2);
@@ -1197,7 +1201,7 @@ namespace anyapp
                     string sql_exe_ky = "select * from dncchrunlist_kyq where OffTime is null and DncBoilerId=" + bid;
                     int runnum_ky = db.GetCommand(sql_exe_ky).Rows.Count;
                     DataTable dt_kyq = db.GetCommand(sql_kyq_run);
-                    DateTime lastruntime = DateTime.Parse("2020-12-29 12:00:00");
+                    DateTime lastruntime = DateTime.Parse("2021-1-1 00:00:00");
                     int kyqid = 0;
                     string kyqname = "";
                     string bname = "";
@@ -1737,7 +1741,7 @@ namespace anyapp
         private void DCUI(DBHelper db)
         {
             #region 短吹
-            //凌晨1点重置数据
+            //凌晨0点重置数据
             if (DateTime.Now.Hour == 0 )
             {
                 irarr.Clear();
@@ -2166,8 +2170,8 @@ namespace anyapp
                 }
                 else
                 {
-                    string sql = "update dncchrunlist set RunTime=now()  where Id=" + id;
-                    db.CommandExecuteNonQuery(sql);
+                    //string sql = "update dncchrunlist set RunTime=now()  where Id=" + id;
+                    //db.CommandExecuteNonQuery(sql);
                     
                     db.CommandExecuteNonQuery("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + Name_kw + "';");
                     //30秒后看看，没吹继续调吹
@@ -2191,6 +2195,15 @@ namespace anyapp
                     DoChui(db, arr[1], arr[2], arr[3], arr[4], arr[0]);
                     //string sqloff = "update dncchrunlist set OffTime='" + DateTime.Now + "'  where Id=" + arr[3];
                     //db.CommandExecuteNonQuery(sqloff);
+                }
+                else if (dt.Rows[0][0].ToString().Equals("2"))
+                {
+                    string sql1 = "update dncchrunlist set RunTime='" + DateTime.Now + "'  where Id=" + arr[3];
+                    db.CommandExecuteNonQuery(sql);
+                }
+                else
+                {
+                    AddLgoToTXT(DateTime.Now.ToString() + "：" + arr[4] + "吹灰器故障！");
                 }
             }
             timerClose.Dispose();
@@ -2393,9 +2406,13 @@ namespace anyapp
                 //30秒一次   吹灰列表执行
                 if (c % (1 * 6) == 0)
                 {
-                    pauserun(db);
-                    ChRun(db);
-                    KyqChRun(db);
+                    if (chmode == "1")
+                    {
+                        pauserun(db);
+                        ChRun(db);
+                        KyqChRun(db);
+                    }
+                    
                 }
 
 
