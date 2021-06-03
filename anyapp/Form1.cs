@@ -1502,7 +1502,7 @@ namespace anyapp
                                                             xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰，全序列吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
                                                           
                                                            
-                                                            timerClose3 = new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id}, 10 * 60000, 0);
+                                                            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id}, 10 * 60000, 0);
 
                                                             //xuliearr.Add("update dnccharea set NowNumber=0,All_sta=0,TwoHour=0,PreTime=null,NumberTo=0,Wrlhigh_Val= Wrlhigh_Val+Vup  where id=" + id);
                                                             //xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
@@ -1813,7 +1813,7 @@ namespace anyapp
                     }
                     else
                     {
-                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('IR" + item + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item + ",'IR" + item + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('IR" + item + "','" + realtime + "','" + realtime + "','" + realtime + "','短吹常规吹灰',0,1," + item + ",'IR" + item + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
                         AddLgoToTXT(DateTime.Now.ToString() + ":IR" + item + "吹灰器加入列表");
                        // timerClose3 = new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "IR" + item, "1" }, 10*60000, 0);
                         //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='IR" + item + "';");
@@ -1821,8 +1821,7 @@ namespace anyapp
                     }
                 }
             }
-
-
+            db.ExecuteTransaction(arrsql);
 
             //int c1 = new Random().Next(24) + 1;
             #endregion
@@ -1860,7 +1859,7 @@ namespace anyapp
                 else
                 {
                     xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
-                    timerClose3 = new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id }, 10 * 60000, 0);
+                    new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id }, 10 * 60000, 0);
                     //timerClose2 = new System.Threading.Timer(new TimerCallback(backcall2), arrparam, 10 * 60000, 0);
                     //xuliearr.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + item1[0].ToString() + "';");
                     //xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
