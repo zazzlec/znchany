@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.DisplayName = "jinjieserver";
+            this.serviceInstaller1.DisplayName = "chanyserver";
             this.serviceInstaller1.ServiceName = "jinjieserver";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
