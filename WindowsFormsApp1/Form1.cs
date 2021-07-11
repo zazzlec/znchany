@@ -16,8 +16,8 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
-            timer1.Interval = 500;
-            timer1.Start();
+            //timer1.Interval = 500;
+            //timer1.Start();
         }
         public static void AddLgoToTXT(string logstring)
         {
@@ -35,16 +35,21 @@ namespace WindowsFormsApp1
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
+            //new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", "888" }, 500, 0);
         }
         private void backcall_cg(object o)
         {
-            AddLgoToTXT(DateTime.Now.ToString() + "：10分钟后续操作");
+            MessageBox.Show("Test");
+            //AddLgoToTXT(DateTime.Now.ToString() + "：10分钟后续操作");
         }
     }
 }
