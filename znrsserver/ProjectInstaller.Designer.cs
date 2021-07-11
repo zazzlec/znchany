@@ -39,8 +39,9 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.DisplayName = "chanyserver";
-            this.serviceInstaller1.ServiceName = "jinjieserver";
+            this.serviceInstaller1.Description = "锦界智能吹灰服务any";
+            this.serviceInstaller1.DisplayName = "jjchanyserver";
+            this.serviceInstaller1.ServiceName = "jjchanyserver";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
             // ProjectInstaller
