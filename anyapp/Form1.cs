@@ -116,10 +116,10 @@ namespace anyapp
             TimeSpan toNow = new TimeSpan(lTime);
             return dtStart.Add(toNow);
         }
-        public static int bid = 6;//6号炉
-        public static string nspace = "unit06";//6号炉
-        //public static int bid = 5;//5号炉
-        //public static string nspace = "unit05";//5号炉
+        //public static int bid = 6;//6号炉
+        //public static string nspace = "unit06";//6号炉
+        public static int bid = 5;//5号炉
+        public static string nspace = "unit05";//5号炉
         public static DateTime realtime = DateTime.MinValue;
 
 
@@ -484,33 +484,33 @@ namespace anyapp
         //12个背火侧温度tag  abd   a左 a前 a右 a后  b左 b前 b右 b后  d左 d前 d右 d后
         public List<string> b_tags_12 = new List<string>
         {
-            ////5号炉
-            //"SH02ZNRTD14",
-            //"SH01ZNRTD14",
-            //"SH01ZNRTD07",
-            //"SH02ZNRTD07",
-            //"SH06ZNRTD19",
-            //"SH05ZNRTD19",
-            //"SH04ZNRTD19",
-            //"SH03ZNRTD19",
-            //"SH06ZNRTD20",
-            //"SH05ZNRTD20",
-            //"SH04ZNRTD20",
-            //"SH03ZNRTD20"
+            //5号炉
+            "SH02ZNRTD14",
+            "SH01ZNRTD14",
+            "SH01ZNRTD07",
+            "SH02ZNRTD07",
+            "SH06ZNRTD19",
+            "SH05ZNRTD19",
+            "SH04ZNRTD19",
+            "SH03ZNRTD19",
+            "SH06ZNRTD20",
+            "SH05ZNRTD20",
+            "SH04ZNRTD20",
+            "SH03ZNRTD20"
 
-            //6号炉
-            "SH02ZNRTD22",
-            "SH01ZNRTD11",
-            "SH01ZNRTD22",
-            "SH02ZNRTD09",
-            "SH06ZNRTD09",
-            "SH05ZNRTD11",
-            "SH04ZNRTD08",
-            "SH03ZNRTD13",
-            "SH06ZNRTD04",
-            "SH05ZNRTD03",
-            "SH04ZNRTD18",
-            "SH03ZNRTD18"
+            ////6号炉
+            //"SH02ZNRTD22",
+            //"SH01ZNRTD11",
+            //"SH01ZNRTD22",
+            //"SH02ZNRTD09",
+            //"SH06ZNRTD09",
+            //"SH05ZNRTD11",
+            //"SH04ZNRTD08",
+            //"SH03ZNRTD13",
+            //"SH06ZNRTD04",
+            //"SH05ZNRTD03",
+            //"SH04ZNRTD18",
+            //"SH03ZNRTD18"
 
         };
         //16个背火侧温度值   a左 a前 a右 a后  b左 b前 b右 b后  d左 d前 d右 d后  c左 c前 c右 c后
@@ -556,42 +556,42 @@ namespace anyapp
         public List<string> rsqy_tags_16 = new List<string>
         {
 
-            ////5号炉
-            //"SH01ZNRTD15",
-            //"SH01ZNRTD16",
-            //"SH01ZNRTD17",
-            //"SH01ZNRTD18",
-            //"SH01ZNRTD19",
-            //"SH01ZNRTD20",
-            //"SH01ZNRTD21",
-            //"SH01ZNRTD22",
-            //"SH02ZNRTD15",
-            //"SH02ZNRTD16",
-            //"SH02ZNRTD17",
-            //"SH02ZNRTD18",
-            //"SH02ZNRTD19",
-            //"SH02ZNRTD20",
-            //"SH02ZNRTD21",
-            //"SH02ZNRTD22"
-
-
-            //6号炉
-            "SH01ZNRTD04",
-            "SH01ZNRTD03",
-            "SH01ZNRTD12",
-            "SH01ZNRTD13",
-            "SH01ZNRTD01",
-            "SH01ZNRTD02",
-            "SH01ZNRTD14",
+            //5号炉
             "SH01ZNRTD15",
-            "SH02ZNRTD04",
-            "SH02ZNRTD03",
-            "SH02ZNRTD12",
-            "SH02ZNRTD13",
-            "SH02ZNRTD01",
-            "SH02ZNRTD02",
+            "SH01ZNRTD16",
+            "SH01ZNRTD17",
+            "SH01ZNRTD18",
+            "SH01ZNRTD19",
+            "SH01ZNRTD20",
+            "SH01ZNRTD21",
+            "SH01ZNRTD22",
             "SH02ZNRTD15",
-            "SH02ZNRTD14"
+            "SH02ZNRTD16",
+            "SH02ZNRTD17",
+            "SH02ZNRTD18",
+            "SH02ZNRTD19",
+            "SH02ZNRTD20",
+            "SH02ZNRTD21",
+            "SH02ZNRTD22"
+
+
+            ////6号炉
+            //"SH01ZNRTD04",
+            //"SH01ZNRTD03",
+            //"SH01ZNRTD12",
+            //"SH01ZNRTD13",
+            //"SH01ZNRTD01",
+            //"SH01ZNRTD02",
+            //"SH01ZNRTD14",
+            //"SH01ZNRTD15",
+            //"SH02ZNRTD04",
+            //"SH02ZNRTD03",
+            //"SH02ZNRTD12",
+            //"SH02ZNRTD13",
+            //"SH02ZNRTD01",
+            //"SH02ZNRTD02",
+            //"SH02ZNRTD15",
+            //"SH02ZNRTD14"
         };
         public void CHPoint(DBHelper db)
         {
@@ -692,8 +692,8 @@ namespace anyapp
         {
             List<string> arr = new List<string>();
             //获取锅炉信息
-            string sql_pointkks = "select DISTINCT Name_kw from dncchpointkks_6 where Status=1 and  IsDeleted=0 and DncBoilerId=" + bid;//6号炉
-           // string sql_pointkks = "select DISTINCT Name_kw from dncchpointkks_5 where Status=1 and  IsDeleted=0 and DncBoilerId=" + bid;//5号炉
+            //string sql_pointkks = "select DISTINCT Name_kw from dncchpointkks_6 where Status=1 and  IsDeleted=0 and DncBoilerId=" + bid;//6号炉
+           string sql_pointkks = "select DISTINCT Name_kw from dncchpointkks_5 where Status=1 and  IsDeleted=0 and DncBoilerId=" + bid;//5号炉
 
             DataTable dt_pk = db.GetCommand(sql_pointkks);
 
@@ -721,16 +721,16 @@ namespace anyapp
                 var timestamp = long.Parse(item["item"]["timestamp"].ToString());//锦界环境
                 DateTime up_date = ConvertLongToDateTime(timestamp);//锦界环境
                 d1 = up_date;
-                 sql_up_pvalue = "update dncchpointkks_6 set Pvalue=" + value + ",RealTime='" + up_date + "' where Name_kw='" + name + "' and DncBoilerId=" + bid + ";";//6号炉
-                //sql_up_pvalue = "update dncchpointkks_5 set Pvalue=" + value + ",RealTime='" + up_date + "' where Name_kw='" + name + "' and DncBoilerId=" + bid + ";";//5号炉
+                //sql_up_pvalue = "update dncchpointkks_6 set Pvalue=" + value + ",RealTime='" + up_date + "' where Name_kw='" + name + "' and DncBoilerId=" + bid + ";";//6号炉
+                sql_up_pvalue = "update dncchpointkks_5 set Pvalue=" + value + ",RealTime='" + up_date + "' where Name_kw='" + name + "' and DncBoilerId=" + bid + ";";//5号炉
                 arr.Add(sql_up_pvalue);
             }
             //*/
             db.ExecuteTransaction(arr);
             realtime = d1;
             arr.Clear();
-             string sql_point_all = "select  Name_kw,DncTypeId,DncType_Name,Pvalue from dncchpointkks_6 where Status=1 and IsDeleted=0 and DncBoilerId=" + bid;//6号炉
-           // string sql_point_all = "select  Name_kw,DncTypeId,DncType_Name,Pvalue from dncchpointkks_5 where Status=1 and IsDeleted=0 and DncBoilerId=" + bid;//5号炉
+            //string sql_point_all = "select  Name_kw,DncTypeId,DncType_Name,Pvalue from dncchpointkks_6 where Status=1 and IsDeleted=0 and DncBoilerId=" + bid;//6号炉
+            string sql_point_all = "select  Name_kw,DncTypeId,DncType_Name,Pvalue from dncchpointkks_5 where Status=1 and IsDeleted=0 and DncBoilerId=" + bid;//5号炉
             DataTable dt_pvalue = db.GetCommand(sql_point_all);
             List<point> vl = new List<point>();
             foreach (DataRow item in dt_pvalue.Rows)
@@ -1198,7 +1198,8 @@ namespace anyapp
                 db.ExecuteTransaction(arr);
 
 
-                string sql_his = " insert  dnccharea_his (Status,IsDeleted,DncBoilerId,DncBoiler_Name,DncChareaId,DncCharea_Name,Wrl_Val,Wrlhigh_Val,RealTime,NumberTo,TwoHour,NowNumber,TotleNumber,PreTime) select Status,IsDeleted,DncBoilerId,DncBoiler_Name,Id,K_Name_kw,Wrl_Val,Wrlhigh_Val,RealTime,NumberTo,TwoHour,NowNumber,TotleNumber,PreTime from dnccharea where DncBoilerId=" + bid + " and Id>1";
+                string sql_his = " insert  dnccharea_his (Status,IsDeleted,DncBoilerId,DncBoiler_Name,DncChareaId,DncCharea_Name,Wrl_Val,Wrlhigh_Val,RealTime,NumberTo,TwoHour,NowNumber,TotleNumber,PreTime,All_sta) select Status,IsDeleted,DncBoilerId,DncBoiler_Name,Id,K_Name_kw,Wrl_Val,Wrlhigh_Val,RealTime,NumberTo,TwoHour,NowNumber,TotleNumber,PreTime,All_sta from dnccharea where DncBoilerId=" + bid + " and Id>1";
+               // AddLgoToTXT(DateTime.Now.ToString() + ":"+ sql_his);
                 db.CommandExecuteNonQuery(sql_his);
 
                 AddLgoToTXT(DateTime.Now.ToString() + ":更新污染率结束！");
@@ -1272,79 +1273,80 @@ namespace anyapp
                             
 
 
-                            #region 水冷壁非周期性吹灰
-                            //水冷壁非周期性
-                            double mg_wrl = (mg_wrl_left + mg_wrl_right) / 2;
-                            double gz_wrl = (gz_wrl_left + gz_wrl_right) / 2;
-                            //if (mg_wrl < 0.825 && gz_wrl < 0.9)
-                            if (mg_wrl < mg_wrl_low && gz_wrl < gz_wrl_low)
-                            {
-                                // string sql_chlist = "select Name_kw,Wrl_Val,Wrlhigh_Val,last_temp_dif_Val,now_temp_dif_Val,dx_temp_dif_Val,slb_circle_num,slb_floor_Val from V_chwrl where Status=1  and DncBoilerId=" + boilerid;
-                                string sql_chlist = "select Id,Name_kw,slb_floor_Val,last_temp_dif_Val,now_temp_dif_Val,DncBoiler_Name from dncchqpoint where DncChtypeId=1 and DncBoilerId=" + bid;
-                                DataTable dt_chlist = db.GetCommand(sql_chlist);
-                                var list1 = new List<Chpoint>();
-                                var list2 = new List<Chpoint>();
-                                var list3 = new List<Chpoint>();
-                                var list4 = new List<Chpoint>();
-                                foreach (DataRow item in dt_chlist.Rows)
-                                {
-                                    var obj = new Chpoint();
-                                    obj.Id = int.Parse(item[0].ToString());
-                                    obj.Name_kw = item[1].ToString();
-                                    obj.Slb_floor_Val = int.Parse(item[2].ToString());
-                                    obj.Last_temp_dif_Val = double.Parse(item[3].ToString());
-                                    obj.Now_temp_dif_Val = double.Parse(item[4].ToString());
-                                    obj.Last_now_dif = double.Parse(item[3].ToString()) - double.Parse(item[4].ToString());
-                                    obj.DncBoilerId = bid;
-                                    obj.DncBoiler_Name = item[5].ToString();
-                                    if (obj.Id == 1)
-                                    {
-                                        list1.Add(obj);
-                                    }
-                                    if (obj.Id == 2)
-                                    {
-                                        list2.Add(obj);
-                                    }
-                                    if (obj.Id == 3)
-                                    {
-                                        list3.Add(obj);
-                                    }
-                                    if (obj.Id == 4)
-                                    {
-                                        list4.Add(obj);
-                                    }
+                            //#region 水冷壁非周期性吹灰
+                            ////水冷壁非周期性
+                            //double mg_wrl = (mg_wrl_left + mg_wrl_right) / 2;
+                            //double gz_wrl = (gz_wrl_left + gz_wrl_right) / 2;
+                            ////if (mg_wrl < 0.825 && gz_wrl < 0.9)
+                            //if (mg_wrl < mg_wrl_low && gz_wrl < gz_wrl_low)
+                            //{
+                            //    // string sql_chlist = "select Name_kw,Wrl_Val,Wrlhigh_Val,last_temp_dif_Val,now_temp_dif_Val,dx_temp_dif_Val,slb_circle_num,slb_floor_Val from V_chwrl where Status=1  and DncBoilerId=" + boilerid;
+                            //    string sql_chlist = "select Id,Name_kw,slb_floor_Val,last_temp_dif_Val,now_temp_dif_Val,DncBoiler_Name from dncchqpoint where DncChtypeId=1 and DncBoilerId=" + bid;
+                            //    DataTable dt_chlist = db.GetCommand(sql_chlist);
+                            //    var list1 = new List<Chpoint>();
+                            //    var list2 = new List<Chpoint>();
+                            //    var list3 = new List<Chpoint>();
+                            //    var list4 = new List<Chpoint>();
+                            //    foreach (DataRow item in dt_chlist.Rows)
+                            //    {
+                            //        var obj = new Chpoint();
+                            //        obj.Id = int.Parse(item[0].ToString());
+                            //        obj.Name_kw = item[1].ToString();
+                            //        obj.Slb_floor_Val = int.Parse(item[2].ToString());
+                            //        obj.Last_temp_dif_Val = double.Parse(item[3].ToString());
+                            //        obj.Now_temp_dif_Val = double.Parse(item[4].ToString());
+                            //        obj.Last_now_dif = double.Parse(item[3].ToString()) - double.Parse(item[4].ToString());
+                            //        obj.DncBoilerId = bid;
+                            //        obj.DncBoiler_Name = item[5].ToString();
+                            //        if (obj.Slb_floor_Val == 1)
+                            //        {
+                            //            list1.Add(obj);
+                            //        }
+                            //        if (obj.Slb_floor_Val == 2)
+                            //        {
+                            //            list2.Add(obj);
+                            //        }
+                            //        if (obj.Slb_floor_Val == 3)
+                            //        {
+                            //            list3.Add(obj);
+                            //        }
+                            //        if (obj.Slb_floor_Val == 4)
+                            //        {
+                            //            list4.Add(obj);
+                            //        }
 
-                                }
-                                List<Chpoint> chlist = new List<Chpoint>();
-                                chlist = Chlist(list1).Concat(Chlist(list2)).Concat(Chlist(list3)).Concat(Chlist(list4)).ToList();
-                                int cl_num = chlist.Count;
-
-
-                                List<string> arrsql = new List<string>();
-                                for (int j = 0; j < cl_num; j++)
-                                {
-                                    int id = chlist[j].Id;
-
-                                    string chq_name = chlist[j].Name_kw;
-                                    int bid = chlist[j].DncBoilerId;
-                                    string bname = chlist[j].DncBoiler_Name;
-                                    if (chmode.Equals("1"))
-                                    {
-                                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','短吹非周期性吹灰',1,0," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
-                                    }
-                                    else
-                                    {
-                                        arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','" + realtime + "','" + realtime + "','短吹非周期性吹灰',0,1," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
-                                        //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + chq_name + "';");
-                                        //arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
-                                    }
-
-                                    db.ExecuteTransaction(arrsql);
-                                }
-                            }
+                            //    }
+                            //    List<Chpoint> chlist = new List<Chpoint>();
+                            //    chlist = Chlist(list1).Concat(Chlist(list2)).Concat(Chlist(list3)).Concat(Chlist(list4)).ToList();
+                            //    int cl_num = chlist.Count;
 
 
-                            #endregion
+                            //    List<string> arrsql = new List<string>();
+                            //    for (int j = 0; j < cl_num; j++)
+                            //    {
+                            //        int id = chlist[j].Id;
+
+                            //        string chq_name = chlist[j].Name_kw;
+                            //        int bid = chlist[j].DncBoilerId;
+                            //        string bname = chlist[j].DncBoiler_Name;
+                            //        if (chmode.Equals("1"))
+                            //        {
+                            //            arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','短吹非周期性吹灰',1,0," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                            //        }
+                            //        else
+                            //        {
+                            //            arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','" + realtime + "','" + realtime + "','短吹非周期性吹灰',0,1," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                            //            //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + chq_name + "';");
+                            //            //arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                            //        }
+
+                                    
+                            //    }
+                            //    db.ExecuteTransaction(arrsql);
+                            //}
+
+
+                            //#endregion
 
 
                             #region 水平烟道超过10天或者尾部烟道超过20天未吹
@@ -1490,18 +1492,20 @@ namespace anyapp
                                                     AddLgoToTXT(DateTime.Now.ToString() + ":" + id + "区域全序列吹灰");
                                                     string xuliesql = "select Name_kw,PointId from dncchareanumber where  DncBoilerId=" + bid + " and DncchareId=" + id + "  order by OrderNumber";
                                                     DataTable xuliedt = db.GetCommand(xuliesql);
+                                                    xuliearr.Add("update dnccharea set All_sta=1 where id=" + id);
                                                     foreach (DataRow item1 in xuliedt.Rows)
                                                     {
-                                                        xuliearr.Add("update dnccharea set All_sta=1 where id=" + id);
+                                                      
                                                         if (chmode.Equals("1"))
                                                         {
+                                                           
                                                             xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','污染率超过高值',1,0," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
                                                         }
                                                         else
                                                         {
                                                             xuliearr.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + item1[0].ToString() + "','" + realtime + "','" + realtime + "','" + realtime + "','常规吹灰，全序列吹灰',0,1," + item1[1].ToString() + ",'" + item1[0].ToString() + "'," + bid + ",'" + bid + "号锅炉'," + id + ",'" + K_Name_kw + "');");
-                                                          
-                                                           
+                                                           // xuliearr.Add("update dnccharea set All_sta=0,NumberTo=0 where id=" + id);
+
                                                             new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id}, 10 * 60000, 0);
 
                                                             //xuliearr.Add("update dnccharea set NowNumber=0,All_sta=0,TwoHour=0,PreTime=null,NumberTo=0,Wrlhigh_Val= Wrlhigh_Val+Vup  where id=" + id);
@@ -1509,6 +1513,8 @@ namespace anyapp
                                                             //xuliearr.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
                                                         }
                                                     }
+
+
                                                     //if (chmode.Equals("1"))
                                                     //{
                                                     //    xuliearr.Add("update dnccharea set All_sta=1 where id=" + id);
@@ -2252,12 +2258,12 @@ namespace anyapp
         }
         private void backcall_cg(object o)
         {
-            AddLgoToTXT(DateTime.Now.ToString() + "：10分钟后续操作");
+            //AddLgoToTXT(DateTime.Now.ToString() + "：10分钟后续操作");
             DBHelper db = new DBHelper();
             List<string> item = (List<string>)o;
             string DncChqpointId = item[0].ToString(); 
             int DncchareId = int.Parse(item[1].ToString());
-            AddLgoToTXT(DateTime.Now.ToString() + "：吹灰器id："+ DncChqpointId+",区域ID："+ item[1].ToString());
+           // AddLgoToTXT(DateTime.Now.ToString() + "：吹灰器id："+ DncChqpointId+",区域ID："+ item[1].ToString());
             if (DncchareId >= 2 && DncchareId <= 13)
             {
                 string csql = "select Wrl_Val,Wrlhigh_Val,K_Name_kw,NowNumber,TotleNumber,NumberTo,All_sta,v1  from dnccharea where id=" + DncchareId;
@@ -2780,8 +2786,80 @@ namespace anyapp
             }
         }
         #endregion
+
         #endregion
 
-        
+        private void button4_Click(object sender, EventArgs e)
+        {
+            DBHelper db = new DBHelper();
+            string sql_chlist = "select Id,Name_kw,slb_floor_Val,last_temp_dif_Val,now_temp_dif_Val,DncBoiler_Name from dncchqpoint where DncChtypeId=1 and DncBoilerId=" + bid;
+            DataTable dt_chlist = db.GetCommand(sql_chlist);
+            var list1 = new List<Chpoint>();
+            var list2 = new List<Chpoint>();
+            var list3 = new List<Chpoint>();
+            var list4 = new List<Chpoint>();
+            foreach (DataRow item in dt_chlist.Rows)
+            {
+                var obj = new Chpoint();
+                obj.Id = int.Parse(item[0].ToString());
+                obj.Name_kw = item[1].ToString();
+                obj.Slb_floor_Val = int.Parse(item[2].ToString());
+                obj.Last_temp_dif_Val = double.Parse(item[3].ToString());
+                obj.Now_temp_dif_Val = double.Parse(item[4].ToString());
+                obj.Last_now_dif = double.Parse(item[3].ToString()) - double.Parse(item[4].ToString());
+                obj.DncBoilerId = bid;
+                obj.DncBoiler_Name = item[5].ToString();
+                if (obj.Slb_floor_Val == 1)
+                {
+                    list1.Add(obj);
+                }
+                if (obj.Slb_floor_Val == 2)
+                {
+                    list2.Add(obj);
+                }
+                if (obj.Slb_floor_Val == 3)
+                {
+                    list3.Add(obj);
+                }
+                if (obj.Slb_floor_Val == 4)
+                {
+                    list4.Add(obj);
+                }
+
+            }
+            List<Chpoint> chlist = new List<Chpoint>();
+            chlist = Chlist(list1).Concat(Chlist(list2)).Concat(Chlist(list3)).Concat(Chlist(list4)).ToList();
+            int cl_num = chlist.Count;
+
+
+            List<string> arrsql = new List<string>();
+            for (int j = 0; j < cl_num; j++)
+            {
+                int id = chlist[j].Id;
+
+                string chq_name = chlist[j].Name_kw;
+                int bid = chlist[j].DncBoilerId;
+                string bname = chlist[j].DncBoiler_Name;
+                if (chmode.Equals("1"))
+                {
+                    arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','短吹非周期性吹灰',1,0," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                }
+                else
+                {
+                    arrsql.Add("insert into dncchrunlist (Name_kw,AddTime,RunTime,OffTime,Remarks,Status,IsDeleted,DncChqpointId,DncChqpoint_Name,DncBoilerId,DncBoiler_Name,DncchareId,Dncchare_Name) values ('" + chq_name + "','" + realtime + "','" + realtime + "','" + realtime + "','短吹非周期性吹灰',0,1," + id + ",'" + chq_name + "'," + bid + ",'" + bid + "号锅炉',1,'水冷壁');");
+                    //arrsql.Add("update dncchqpoint set Lastchtime=now() where DncBoilerId=" + bid + " and Name_kw='" + chq_name + "';");
+                    //arrsql.Add("update dncboiler set Qp_bh_update='0'  where Id=" + bid + ";");
+                }
+
+
+            }
+          //  db.ExecuteTransaction(arrsql);
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            string  id = "2";
+            new System.Threading.Timer(new TimerCallback(backcall_cg), new List<string>() { "", id }, 5000, 0);
+        }
     }
 }

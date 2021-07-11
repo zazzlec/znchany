@@ -69,11 +69,11 @@ namespace znrsserver
         public static string token="";
         public static string account = "znch003";//登录账号，需要赋值
         public static string password = "shglznch";//登录密码，需要赋值
-        public static string url = "http://132.0.6.80:8721";//接口地址，需要赋值，6号机组
-       // public static string url = "http://132.0.5.80:8721";//接口地址，需要赋值，5号机组
+        //public static string url = "http://132.0.6.80:8721";//接口地址，需要赋值，6号机组
+        public static string url = "http://132.0.5.80:8721";//接口地址，需要赋值，5号机组
         public static int ipindex = 0;
-       // public static int bid = 5;//5号机组
-        public static int bid = 6;//6号机组
+        public static int bid = 5;//5号机组
+        //public static int bid = 6;//6号机组
         public static string qz = "132.0";
         public static string dk = "8721";
         public static string[] host = { "80","81","82" };

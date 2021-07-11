@@ -74,7 +74,7 @@ class HttpRequest {
         break;
     }
 
-    if(error.config.url.indexOf("hasnoreadmassage")==-1){
+    if (error.config.url.indexOf("hasnoreadmassage") == -1 || error.config.url.indexOf("profile") == -1) {
       Modal.error({
         title: "错误提示",
         content: message,
